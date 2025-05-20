@@ -44,6 +44,21 @@ echo
 # Detecta versão do Ubuntu
 UBUNTU_VERSION=$(grep '^VERSION_ID=' /etc/os-release | cut -d '=' -f2 | tr -d '"')
 
+# Solicitando a senha
+while (true)
+do
+  echo "Qual a senha deseja colocar no banco de dados?"
+  read -s -p "Use apenas letras, números: " PASSWORD_MYSQL
+  echo
+
+  if [[ "${PASSWORD_MYSQL}" =~ ^[a-zA-Z0-9]+$ ]]
+  then
+    break
+  else
+    echo -e "${RED} ❌ Senha não atende aos parametros mencionados, tente novamente!${NC}"
+  fi
+done
+
 # Repositório Zabbix
 echo -e "${YELLOW}📥 Baixando e configurando repositório do Zabbix para Ubuntu ${UBUNTU_VERSION}...${NC}"
 wget -q https://repo.zabbix.com/zabbix/7.2/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_7.2-1+ubuntu${UBUNTU_VERSION}_all.deb
@@ -65,19 +80,19 @@ status
 echo -e "${YELLOW}📦 Criando banco de dados Zabbix...${NC}"
 mysql -u root <<EOF &>/dev/null
 CREATE DATABASE IF NOT EXISTS zabbix CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
-CREATE USER IF NOT EXISTS 'zabbix'@'localhost' IDENTIFIED BY '123456'; 
+CREATE USER IF NOT EXISTS 'zabbix'@'localhost' IDENTIFIED BY '${PASSWORD_MYSQL}'; 
 GRANT ALL PRIVILEGES ON zabbix.* TO 'zabbix'@'localhost';
 SET GLOBAL log_bin_trust_function_creators = 1;
 EOF
 
-zcat /usr/share/zabbix/sql-scripts/mysql/server.sql.gz | mysql --default-character-set=utf8mb4 -u zabbix -p123456 zabbix &>/dev/null
+zcat /usr/share/zabbix/sql-scripts/mysql/server.sql.gz | mysql --default-character-set=utf8mb4 -u zabbix -p${PASSWORD_MYSQL} zabbix &>/dev/null
 mysql -u root -e "SET GLOBAL log_bin_trust_function_creators = 0;" &>/dev/null
 status
 
 # Configuração do Zabbix
 echo -e "${YELLOW}📦 Configurando o servidor Zabbix...${NC}"
 if [ -f /etc/zabbix/zabbix_server.conf ]; then
-  sed -i 's/# DBPassword=/DBPassword=123456/' /etc/zabbix/zabbix_server.conf &>/dev/null
+  sed -i "s/# DBPassword=/DBPassword=${PASSWORD_MYSQL}/" /etc/zabbix/zabbix_server.conf &>/dev/null
   status
 else
   echo -e "${RED}❌ Falhou (arquivo de conf não encontrado)${NC}\n"
