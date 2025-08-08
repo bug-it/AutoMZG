@@ -51,28 +51,32 @@ echo -e "${NC}"
 echo -e "${BRANCO}:: Instalação do ${LARANJA}Zabbix + MySQL + Grafana${NC}"
 echo
 echo -e "${AZUL_CLARO}Selecione a versão do Zabbix:${NC}"
+echo -e
 echo -e "${ROXO_CLARO}1)${BRANCO} Zabbix ${LARANJA}7.4 ${BRANCO}"
-echo -e "${ROXO_CLARO}2)${BRANCO} Zabbix ${LARANJA}7.2"
-echo -e "${ROXO_CLARO}3)${BRANCO} Zabbix ${LARANJA}7.0 ${BRANCO}LTS"
-echo -e "${ROXO_CLARO}4)${BRANCO} Zabbix ${LARANJA}6.0 ${BRANCO}LTS"
-echo -e "${ROXO_CLARO}0)${VERMELHO} Sair"
+echo -e
+echo -e "${ROXO_CLARO}2)${BRANCO} Zabbix ${LARANJA}7.2 ${BRANCO}"
+echo -e
+echo -e "${ROXO_CLARO}0)${VERMELHO} Sair"${NC}
 echo -e
 read -p "$(echo -e "${BRANCO}Opção: ${ROXO_CLARO}")" OPTION_VER
 echo -e
+echo -e "${BRANCO}*****************************************"
 echo -e
 echo -e "${AZUL_CLARO}Selecione a linguagem padrão:"
-echo -e "${ROXO_CLARO}1)${BRANCO} pt-BR"
-echo -e "${ROXO_CLARO}2)${BRANCO} en-US"
-echo -e "${ROXO_CLARO}3)${BRANCO} es-ES"
-echo -e "${ROXO_CLARO}0)${VERMELHO} Sair"
+echo -e
+echo -e "${ROXO_CLARO}1)${BRANCO} PORTUGUES"
+echo -e
+echo -e "${ROXO_CLARO}2)${BRANCO} INGLES"
+echo -e
+echo -e "${ROXO_CLARO}3)${BRANCO} ESPANHOL"
+echo -e
+echo -e "${ROXO_CLARO}0)${VERMELHO} Sair"${NC}
 echo -e
 read -p "$(echo -e "${BRANCO}Opção: ${ROXO_CLARO}")" OPTION_LANG
 
 case "$OPTION_VER" in
   1) ZABBIX_VER="7.4" ; DIR="release" ;;
   2) ZABBIX_VER="7.2" ; DIR="release" ;;
-  3) ZABBIX_VER="7.0" ; DIR="" ;;
-  4) ZABBIX_VER="6.0" ; DIR="" ;;
   0) exit 0 ;;
   *) echo "Opção inválida!"; exit 1 ;;
 esac
@@ -88,12 +92,12 @@ esac
 clear
 
 # Detecta SO e versão
-echo -e "${BRANCO}💻 Detectando sistema operacional: ${ROXO_CLARO}${OS_NAME} ${OS_VERSION}"
+echo -e "${BRANCO}💻 Detectando Sistema Operacional: ${ROXO_CLARO}${OS_NAME} ${OS_VERSION}"
 echo
 echo
 
 # Baixa repositório Zabbix
-echo -e "${BRANCO}📥 Baixando repositório do Zabbix ${LARANJA}${ZABBIX_VER}${BRANCO} para Ubuntu ${LARANJA}${OS_VERSION}${BRANCO}:"
+echo -e "${BRANCO}📥 Baixando Repositório do Zabbix ${LARANJA}${ZABBIX_VER}${BRANCO} para Ubuntu ${LARANJA}${OS_VERSION}${BRANCO}:"
 URL="https://repo.zabbix.com/zabbix/${ZABBIX_VER}/${DIR:+$DIR/}ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_${ZABBIX_VER}+ubuntu${OS_VERSION}_all.deb"
 
 wget -q "$URL" -O "zabbix-release_${ZABBIX_VER}.deb"
@@ -115,13 +119,13 @@ apt install -y mysql-server &>/dev/null
 status
 
 # Solicita senha root do MySQL
-read -sp "$(echo -e "${BRANCO}🔑 Digite senha para o usuário ROOT do MySQL:")" MYSQL_ROOT_PASS
+read -sp "$(echo -e "${BRANCO}🔑 Digite uma senha para o usuário ROOT do MySQL:")" MYSQL_ROOT_PASS
 echo
 echo -e "${VERDE}✅ Senha digitada: ${AZUL_CLARO}${MYSQL_ROOT_PASS}"
 echo
 
 # Solicita senha do usuário Zabbix
-read -sp "$(echo -e "${BRANCO}🔑 Digite senha para o banco do Zabbix:")" DB_PASS
+read -sp "$(echo -e "${BRANCO}🔑 Digite uma senha para o usuário DB Zabbix:")" DB_PASS
 echo
 echo -e "${VERDE}✅ Senha digitada: ${AZUL_CLARO}${DB_PASS}"
 echo
@@ -203,7 +207,8 @@ status
 IP=$(hostname -I | awk '{print $1}')
 echo
 echo -e "${VERDE}🎉 Instalação Finalizada com Sucesso!"
-echo -e "${LARANJA}🔗 Acesse o Zabbix: ${BRANCO}http://${AZUL_CLARO}${IP}${BRANCO}/zabbix"
-echo -e "${LARANJA}🔗 Acesse o Grafana: ${BRANCO}http://${AZUL_CLARO}${IP}${BRANCO}:3000"
+echo
+echo -e "${ROXO_CLARO}🔗${LARANJA} Zabbix: ${BRANCO}http://${AZUL_CLARO}${IP}${BRANCO}/zabbix${BRANCO} (${LARANJA}login: ${AZUL_CLARO}Admin / zabbix${BRANCO})"
+echo -e "${ROXO_CLARO}🔗${LARANJA} Grafana: ${BRANCO}http://${AZUL_CLARO}${IP}${BRANCO}:3000${BRANCO} (${LARANJA}login: ${AZUL_CLARO}admin / admin${BRANCO})"
 echo
 echo -e "${BRANCO}Script desenvolvido por: ${VERDE_LIMAO}BUG IT${NC}"
