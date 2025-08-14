@@ -223,9 +223,9 @@ IP=$(hostname -I | awk '{print $1}')
 echo
 echo -e "${VERDE}🎉 Instalação Finalizada com Sucesso!"
 echo
-echo -e "${ROXO_CLARO}🔗${LARANJA} Zabbix: ${BRANCO}http://${AZUL_CLARO}${IP}${BRANCO}/zabbix (${LARANJA}login: ${AZUL_CLARO}Admin / zabbix${BRANCO})"
-echo -e "${ROXO_CLARO}🔗${LARANJA} Grafana: ${BRANCO}http://${AZUL_CLARO}${IP}${BRANCO}:3000 (${LARANJA}login: ${AZUL_CLARO}admin / admin${BRANCO})"
-echo -e "${ROXO_CLARO}🔗${LARANJA} MySQL: ${BRANCO}mysql -u ${AZUL_CLARO}root${BRANCO} -p (${LARANJA}login: ${AZUL_CLARO}root / ${MYSQL_ROOT_PASS}${BRANCO})"
+echo -e "${ROXO_CLARO}🔗${LARANJA} Zabbix: ${BRANCO}http://${AZUL_CLARO}${IP}${BRANCO}/zabbix (${LARANJA}login: ${AZUL_CLARO}Admin ${BRANCO}/${AZUL_CLARO} zabbix${BRANCO})"
+echo -e "${ROXO_CLARO}🔗${LARANJA} Grafana: ${BRANCO}http://${AZUL_CLARO}${IP}${BRANCO}:3000 (${LARANJA}login: ${AZUL_CLARO}admin ${BRANCO}/${AZUL_CLARO} admin${BRANCO})"
+echo -e "${ROXO_CLARO}🔗${LARANJA} MySQL: ${BRANCO}mysql -u ${AZUL_CLARO}root${BRANCO} -p (${LARANJA}login: ${AZUL_CLARO}root ${BRANCO}/${AZUL_CLARO} ${MYSQL_ROOT_PASS}${BRANCO})"
 echo
 echo -e "${BRANCO}Script desenvolvido por: ${VERDE_LIMAO}BUG IT${NC}"
 echo -e
