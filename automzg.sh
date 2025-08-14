@@ -1,6 +1,12 @@
 #!/bin/bash
 
-# Cores
+# =======================================
+# INSTALADOR MYSQL + ZABBIX + GRAFANA
+# VERSOES: 7.4 | 7.2 | 7.0 LTS | 6.0 LTS
+# Desenvolvido por: BUG IT
+# =======================================
+
+# ===== CORES =====
 VERMELHO="\e[31m"
 VERDE="\e[32m"
 VERDE_LIMAO="\e[92m"
@@ -10,13 +16,13 @@ LARANJA="\e[93m"
 BRANCO="\e[97m"
 NC="\033[0m"
 
-# Verifica se é root
+# ===== VERIFICA ROOT =====
 if [[ "$EUID" -ne 0 ]]; then
   echo -e "${VERMELHO}❌ Este script precisa ser executado como root!${NC}"
   exit 1
 fi
 
-# Verifica distribuição e versão
+# ===== DETECTA VERSAO DO SISTEMA =====
 OS_NAME=$(grep '^NAME=' /etc/os-release | cut -d '=' -f2 | tr -d '"')
 OS_VERSION=$(grep '^VERSION_ID=' /etc/os-release | cut -d '=' -f2 | tr -d '"')
 
@@ -25,7 +31,7 @@ if [[ "$OS_NAME" != "Ubuntu" ]]; then
   exit 1
 fi
 
-# Função status
+# ===== FUNÇÃO STATUS =====
 status() {
   if [ $? -eq 0 ]; then
     echo -e "${VERDE}✅ Concluído${NC}\n"
@@ -35,7 +41,7 @@ status() {
   fi
 }
 
-# Menu de seleção da versão Zabbix
+# ===== MENU =====
 clear
 echo -e "${VERMELHO}"
 cat << "EOF"
@@ -48,57 +54,53 @@ cat << "EOF"
 EOF
 echo -e "${NC}"
 
-echo -e "${BRANCO}:: Instalação do ${LARANJA}Zabbix ${BRANCO}+${LARANJA} MySQL ${BRANCO}+${LARANJA} Grafana${NC}"
-echo
-echo -e "${AZUL_CLARO}Selecione a versão do Zabbix:${NC}"
-echo -e
-echo -e "${ROXO_CLARO}1)${BRANCO} Zabbix ${LARANJA}7.4 ${BRANCO}"
-echo -e
-echo -e "${ROXO_CLARO}2)${BRANCO} Zabbix ${LARANJA}7.2 ${BRANCO}"
-echo -e
-echo -e "${ROXO_CLARO}0)${VERMELHO} Sair"${NC}
-echo -e
+echo -e "${BRANCO}:: Instalação do ${LARANJA}Zabbix ${BRANCO}+${LARANJA} MySQL ${BRANCO}+${LARANJA} Grafana${NC}\n"
+echo -e "${AZUL_CLARO}Selecione a versão do Zabbix:${NC}\n"
+echo -e "${ROXO_CLARO}1)${BRANCO} Zabbix ${LARANJA}7.4"
+echo -e "${ROXO_CLARO}2)${BRANCO} Zabbix ${LARANJA}7.2"
+echo -e "${ROXO_CLARO}3)${BRANCO} Zabbix ${LARANJA}7.0 LTS"
+echo -e "${ROXO_CLARO}4)${BRANCO} Zabbix ${LARANJA}6.0 LTS"
+echo -e "${ROXO_CLARO}0)${VERMELHO} Sair${NC}\n"
 read -p "$(echo -e "${BRANCO}Opção: ${ROXO_CLARO}")" OPTION_VER
-echo -e
-echo -e "${BRANCO}*****************************************"
-echo -e
-echo -e "${AZUL_CLARO}Selecione a linguagem padrão:"
-echo -e
+echo
+
+echo -e "${BRANCO}*****************************************\n"
+echo -e "${AZUL_CLARO}Selecione o idioma padrão:${NC}\n"
 echo -e "${ROXO_CLARO}1)${BRANCO} PORTUGUES"
-echo -e
 echo -e "${ROXO_CLARO}2)${BRANCO} INGLES"
-echo -e
 echo -e "${ROXO_CLARO}3)${BRANCO} ESPANHOL"
-echo -e
-echo -e "${ROXO_CLARO}0)${VERMELHO} Sair"${NC}
-echo -e
+echo -e "${ROXO_CLARO}0)${VERMELHO} Sair${NC}\n"
 read -p "$(echo -e "${BRANCO}Opção: ${ROXO_CLARO}")" OPTION_LANG
 
+# ===== DEFINE VERSÕES =====
 case "$OPTION_VER" in
   1) ZABBIX_VER="7.4" ; DIR="release" ;;
   2) ZABBIX_VER="7.2" ; DIR="release" ;;
+  3) ZABBIX_VER="7.0" ;;
+  4) ZABBIX_VER="6.0" ;;
+
   0) exit 0 ;;
   *) echo "Opção inválida!"; exit 1 ;;
 esac
 
+# ===== DEFINE LINGUAGEM =====
 case "$OPTION_LANG" in
   1) ZABBIX_LANG="pt_BR" ;;
   2) ZABBIX_LANG="en_US" ;;
   3) ZABBIX_LANG="es_ES" ;;
+
   0) exit 0 ;;
   *) echo "Opção inválida!"; exit 1 ;;
 esac
 
 clear
 
-# Detecta SO e versão
-echo -e "${BRANCO}💻 Detectando Sistema Operacional: ${ROXO_CLARO}${OS_NAME} ${OS_VERSION}"
-echo
-echo
+# ===== DETECTA SISTEMA =====
+echo -e "${BRANCO}💻 Detectando Sistema Operacional: ${ROXO_CLARO}${OS_NAME} ${OS_VERSION}\n"
 
-# Baixa repositório Zabbix
+# ===== REPOSITÓRIO =====
 echo -e "${BRANCO}📥 Baixando Repositório do Zabbix ${LARANJA}${ZABBIX_VER}${BRANCO} para Ubuntu ${LARANJA}${OS_VERSION}${BRANCO}:"
-URL="https://repo.zabbix.com/zabbix/${ZABBIX_VER}/${DIR:+$DIR/}ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_${ZABBIX_VER}+ubuntu${OS_VERSION}_all.deb"
+URL="https://repo.zabbix.com/zabbix/${ZABBIX_VER}/${DIR}/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_${ZABBIX_VER}+ubuntu${OS_VERSION}_all.deb"
 
 wget -q "$URL" -O "zabbix-release_${ZABBIX_VER}.deb"
 status
@@ -108,12 +110,12 @@ dpkg -i "zabbix-release_${ZABBIX_VER}.deb" &>/dev/null
 apt update -qq &>/dev/null
 status
 
-# Instala pacotes do Zabbix
+# ===== INSTALAÇÃO ZABBIX =====
 echo -e "${BRANCO}📦 Instalando Zabbix Server:"
 apt install -y zabbix-server-mysql zabbix-frontend-php zabbix-apache-conf zabbix-sql-scripts zabbix-agent &>/dev/null
 status
 
-# Instala MySQL
+# ===== MYSQL =====
 echo -e "${BRANCO}📦 Instalando MySQL Server:"
 apt install -y mysql-server &>/dev/null
 status
@@ -130,7 +132,9 @@ echo
 echo -e "${VERDE}✅ Senha digitada: ${AZUL_CLARO}${DB_PASS}"
 echo
 
-# Configura banco de dados
+
+
+# ===== CONFIGURA MYSQL =====
 echo -e "${BRANCO}📦 Configurando Banco de Dados MySQL:"
 mysql -u root <<EOF &>/dev/null
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${MYSQL_ROOT_PASS}';
@@ -147,26 +151,38 @@ SET GLOBAL log_bin_trust_function_creators = 1;
 EOF
 status
 
+# ===== IMPORTAÇÃO DO BANCO ZABBIX =====
 echo -e "${BRANCO}🔄 Importando base inicial do Zabbix:"
-zcat /usr/share/zabbix/sql-scripts/mysql/server.sql.gz | mysql -u zabbix -p"${DB_PASS}" zabbix &>/dev/null
-status
 
-# Restaura config de binlogs e define idioma no banco
+# Define caminho correto do server.sql.gz conforme a versão
+if [[ "$ZABBIX_VER" == "7.4" || "$ZABBIX_VER" == "7.2" ]]; then
+    SQL_FILE="/usr/share/zabbix/sql-scripts/mysql/server.sql.gz"
+else
+    SQL_FILE="/usr/share/zabbix-sql-scripts/mysql/server.sql.gz"
+fi
+
+# Verifica se o arquivo existe antes de importar
+if [[ -f "$SQL_FILE" ]]; then
+    zcat "$SQL_FILE" | mysql -u zabbix -p"${DB_PASS}" zabbix &>/dev/null
+    status
+else
+    echo -e "${VERMELHO}❌ Arquivo SQL não encontrado: ${SQL_FILE}${NC}"
+    exit 1
+fi
+
 mysql -u root -p"${MYSQL_ROOT_PASS}" -e "SET GLOBAL log_bin_trust_function_creators = 0; USE zabbix; UPDATE users SET lang = '${ZABBIX_LANG}' WHERE lang != '${ZABBIX_LANG}';" &>/dev/null
 
-# Configura zabbix_server.conf
+# ===== CONFIG ZABBIX SERVER =====
 echo -e "${BRANCO}⚙️  Configurando zabbix_server.conf:"
 sed -i "s/# DBPassword=/DBPassword=${DB_PASS}/" /etc/zabbix/zabbix_server.conf &>/dev/null
 status
 
-# Configura idioma do sistema
+# ===== LOCALE =====
 echo -e "${BRANCO}⏳ Configurando idioma ${LARANJA}${ZABBIX_LANG}${BRANCO}:"
 locale-gen "${ZABBIX_LANG}.UTF-8" &>/dev/null
 status
 
-
-
-# Cria arquivo de configuração do frontend para pular setup
+# ===== FRONTEND CONFIG =====
 echo -e "${BRANCO}⏳ Configurando frontend do Zabbix:"
 cat <<EOF > /etc/zabbix/web/zabbix.conf.php
 <?php
@@ -183,11 +199,10 @@ cat <<EOF > /etc/zabbix/web/zabbix.conf.php
 
 \$ZBX_LOCALE = '${ZABBIX_LANG}';
 \$IMAGE_FORMAT_DEFAULT = IMAGE_FORMAT_PNG;
-
 EOF
 status
 
-# Instala Grafana
+# ===== GRAFANA =====
 echo -e "${BRANCO}📦 Instalando Grafana:"
 apt install -y apt-transport-https software-properties-common wget &>/dev/null
 mkdir -p /etc/apt/keyrings/
@@ -197,18 +212,20 @@ apt update -qq &>/dev/null
 apt install -y grafana &>/dev/null
 status
 
-# Reinicia e habilita serviços
+# ===== SERVIÇOS =====
 echo -e "${BRANCO}🔁 Habilitando e Iniciando os Serviços:"
 systemctl enable zabbix-server zabbix-agent apache2 grafana-server &>/dev/null
 systemctl restart zabbix-server zabbix-agent apache2 grafana-server &>/dev/null
 status
 
-# URLs de acessos
+# ===== FINAL =====
 IP=$(hostname -I | awk '{print $1}')
 echo
 echo -e "${VERDE}🎉 Instalação Finalizada com Sucesso!"
 echo
-echo -e "${ROXO_CLARO}🔗${LARANJA} Zabbix: ${BRANCO}http://${AZUL_CLARO}${IP}${BRANCO}/zabbix${BRANCO} (${LARANJA}login: ${AZUL_CLARO}Admin / zabbix${BRANCO})"
-echo -e "${ROXO_CLARO}🔗${LARANJA} Grafana: ${BRANCO}http://${AZUL_CLARO}${IP}${BRANCO}:3000${BRANCO} (${LARANJA}login: ${AZUL_CLARO}admin / admin${BRANCO})"
+echo -e "${ROXO_CLARO}🔗${LARANJA} Zabbix: ${BRANCO}http://${AZUL_CLARO}${IP}${BRANCO}/zabbix (${LARANJA}login: ${AZUL_CLARO}Admin / zabbix${BRANCO})"
+echo -e "${ROXO_CLARO}🔗${LARANJA} Grafana: ${BRANCO}http://${AZUL_CLARO}${IP}${BRANCO}:3000 (${LARANJA}login: ${AZUL_CLARO}admin / admin${BRANCO})"
+echo -e "${ROXO_CLARO}🔗${LARANJA} MySQL: ${BRANCO}mysql -u ${AZUL_CLARO}root${BRANCO} -p (${LARANJA}login: ${AZUL_CLARO}root / ${MYSQL_ROOT_PASS}${BRANCO})"
 echo
 echo -e "${BRANCO}Script desenvolvido por: ${VERDE_LIMAO}BUG IT${NC}"
+echo -e
