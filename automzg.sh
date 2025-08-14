@@ -54,7 +54,7 @@ cat << "EOF"
 EOF
 echo -e "${NC}"
 
-echo -e "${BRANCO}:: Instalação do ${LARANJA}Zabbix ${BRANCO}+${LARANJA} MySQL ${BRANCO}+${LARANJA} Grafana${NC}\n"
+echo -e "${BRANCO}:: Instalação do ${LARANJA}MySQL ${BRANCO}+${LARANJA} Zabbix ${BRANCO}+${LARANJA} Grafana${NC}\n"
 echo -e "${AZUL_CLARO}Selecione a versão do Zabbix:${NC}\n"
 echo -e "${ROXO_CLARO}1)${BRANCO} Zabbix ${LARANJA}7.4"
 echo -e "${ROXO_CLARO}2)${BRANCO} Zabbix ${LARANJA}7.2"
